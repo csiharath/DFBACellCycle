@@ -6,7 +6,7 @@ L'objectif de ce stage est de faire une modélisation hybride dans le but de pou
 Librairies python:
 
 * Cobrapy (0.24)
-*	DFBA (Tourigny)
+*	DFBA (Tourigny) [2](#Référence)
 *	Matplotlib
 *	Numpy
 *	Pandas
@@ -14,4 +14,6 @@ Librairies python:
 
 ## Références <a name="Références"></a>
 
+[1]	Moulin C. Analyse des voies métaboliques au cours du cycle cellulaire : application au métabolisme du cancer. Bio-Informatique, Biologie Systémique [q-bio.QM]. Université Paris-Saclay, 2020. Français. ⟨NNT : 2020UPASG022⟩. ⟨tel-03164566⟩
 
+[2]	Tourigny et al., (2020). dfba: Software for efficient simulation of dynamic flux-balance analysis models in Python. Journal of Open Source Software, 5(52), 2342, https://doi.org/10.21105/joss.02342

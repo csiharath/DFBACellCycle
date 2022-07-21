@@ -17,10 +17,10 @@ Librairies python:
 
 | Fichier| Contenu |
 |-----------|-----------|
-| `./small_model/model_mario2013.xml` | Modèle CHO[<sup>3</sup>](Références) au format sbml |
-| `./small_model/model_mario2013G1.xml ` | Modèle CHO[<sup>3</sup>](Références) au format sbml modifié pour la phase G1 du cycle cellulaire |
-| `./small_model/model_mario2013S.xml ` | Modèle CHO[<sup>3</sup>](Références) au format sbml modifié pour la phase S du cycle cellulaire |
-| `./small_model/model_mario2013G2.xml` | Modèle CHO[<sup>3</sup>](Références) au format sbml modifié pour la phase G2 du cycle cellulaire |
+| `./small_model/model_mario2013_wocit.xml` | Modèle CHO[<sup>3</sup>](Références) au format sbml |
+| `./small_model/model_mario2013_wocitG1.xml ` | Modèle CHO[<sup>3</sup>](Références) au format sbml modifié pour la phase G1 du cycle cellulaire |
+| `./small_model/model_mario2013_wocitS.xml ` | Modèle CHO[<sup>3</sup>](Références) au format sbml modifié pour la phase S du cycle cellulaire |
+| `./small_model/model_mario2013_wocitG2.xml` | Modèle CHO[<sup>3</sup>](Références) au format sbml modifié pour la phase G2 du cycle cellulaire |
 | `HMRdatabase2_00.xml` | Modèle HMR[<sup>4</sup>](#Références) au format sbml |
 | `fba_small_new.ipynb` | Notebook réalisant des FBA sur le modèle CHO pour chaque phase du cylce cellulaire dans le but de valider le modèle |
 | `fba_cellcycle2.ipynb` | Notebook réalisant des FBA sur le modèle HMR pour chaque phase du cylce cellulaire dans le but de valider le modèle |

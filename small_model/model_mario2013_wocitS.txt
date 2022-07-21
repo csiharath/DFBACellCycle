@@ -1,0 +1,36 @@
+-METEXT
+EGLU EGLC ELAC EASP EALA ENH4 EGLN Biomass CO2 O2 Pcr Cr Pi  COA
+
+-CAT
+HK :  EGLC + ATP  => G6P + ADP
+PGI :  G6P => F6P
+PFK :  F6P + ATP => 2 GAP + ADP
+PGK :  GAP + ADP + NAD + Pi => PEP + ATP + NADH
+PK :  PEP + ADP => PYR + ATP
+LDH :  PYR + NADH = ELAC + NAD
+G6PDH :  G6P + 2 NADP => R5P + 2 NADPH + CO2
+EP :  R5P => X5P
+TK :  R5P + 2 X5P  => 2 F6P + GAP
+PDH :  PYR + COA + NAD  => ACCOA + NADH + CO2 
+CS :  ACCOA + OAA  => CIT + COA
+CITS :  CIT + NAD  => AKG + NADH + CO2 
+AKGDH :  AKG + COA + NAD => SCOA + NADH + CO2
+SCOAS :  SCOA + ADP + Pi => SUC + COA + ATP
+SDH :  SUC + 0.66 NAD  =>  MAL +  0.66 NADH +  CO2
+MDH :  MAL + NAD  => OAA + NADH
+ME :  MAL + NAD => PYR + CO2 + NADH
+GLNT :  EGLN + ATP = GLN + ADP
+GLNS :  GLN = GLU + ENH4
+GLDH :  GLU + NAD => AKG + NADH + ENH4
+ALATA :  GLU + PYR => AKG + EALA
+GLUT :  GLU + ADP + Pi  => EGLU + ATP
+RESP :  O2 + 2 ADP + 2 NADH +  2  Pi  =>  2 ATP + 2 NAD 
+LEAK :  O2 + 2 NADH  => 2 NAD 
+ATPASE :  ATP  => ADP + Pi
+AK :  ATP + AMP = 2 ADP
+CK :  Pcr + ADP = Cr + ATP
+PPRIBP :  2 GLN + 0.6 R5P + 2 EASP + 2 ATP  => 2 GLU + 2 MAL + AMP + 2 ADP
+NADPHOX :  NADPH  => NADP
+ACL : CIT + ATP => OAA + ACCOAcit + ADP
+PALM : 8 ACCOAcit + 7 ATP + 14 NADPH => PALM + 7 ADP + 14 NADP
+VBiomass :  1 R5P + 0.029 G6P + 0.033 EGLU + 0.04 EGLN + 3.78 ATP + 0.09 PALM => Biomass

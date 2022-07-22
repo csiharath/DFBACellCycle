@@ -25,6 +25,8 @@ Librairies python:
 | `fba_small_new.ipynb` | Notebook réalisant des FBA sur le modèle CHO pour chaque phase du cylce cellulaire dans le but de valider le modèle |
 | `fba_cellcycle2.ipynb` | Notebook réalisant des FBA sur le modèle HMR pour chaque phase du cylce cellulaire dans le but de valider le modèle |
 | `dfba_small.py` | Scipt simulant un dFBA pour le modèle CHO sans condition particulière (pas intégré au cycle celulaire) |
+| `efm_sbml.py` | Scipt permettant de tracer les voies souhaitées à partir d'un fichier .txt et d'un modèle sbml |
+| `cho.txt` | Exemple de fichier pris en entrée par `efm_sbml.py` |
 
 ## Références <a name="Références"></a>
 

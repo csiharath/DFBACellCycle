@@ -15,22 +15,24 @@ import time
 
 import pandas as pd
 
-########################### Déclaration de variables ##########################
+############################# Variables Declaration ###########################
 
 start_time = time.time()
 
-######### Seuils de taux de croissance ##########
+######### Growth rates threshold ##########
+
 xB = 0.1
 alpha = 0.45
 beta = 0.8
 t1 = (1 + alpha) * xB
 t2 = (1 + beta) * xB
-############################ Modèle sbml Phase G1 ##############################
+
+############################## SBML Model for G1 ##############################
 
 small_model_G1 = read_sbml_model('/home/csiharath/Stage/DFBACellCycle/small_model/model_mario2013_wocitG1.xml')
 small_model_G1.solver = "glpk"
 
-############################### Fonction de Xe #################################
+############################## Biomass Function ###############################
 
 small_model_G1.objective = 'VBiomass'
 print(small_model_G1.objective)
@@ -40,15 +42,15 @@ small_model_G1.reactions.get_by_id("VBiomass").lower_bound = 0
 small_model_G1.reactions.get_by_id("VBiomass").upper_bound = 1
 
 
-############################# Dfba model definition #############################
+############################# dFBA Model Definition ###########################
 
 dfba_model_G1 = DfbaModel(small_model_G1)
 dfba_model_G1.add_objectives(["VBiomass"], ["max"])
 print(dfba_model_G1.objectives)
 
-############################ Paramètres Phase G1 ################################
+############################## G1 Parameters ##################################
 
-# instances of KineticVariable
+##### Instances of Kinetic Variables ######
 
 X = KineticVariable("Biomass", initial_condition=1.04e-4)
 Gluc = KineticVariable("EGLC")
@@ -56,10 +58,11 @@ Lac = KineticVariable("ELAC")
 Gln = KineticVariable("EGLU")
 #O2 = KineticVariable("O2")
 
-# add kinetic variables to dfba_model
+### Add Kinetic variables to dfba_model ###
+
 dfba_model_G1.add_kinetic_variables([X, Gluc, Lac, Gln])#, O2])
 
-# instances of ExchangeFlux
+######## Instances of ExchangeFlux ########
 mu = ExchangeFlux("VBiomass")
 v_G = ExchangeFlux("EX_EGLC") 
 v_N = ExchangeFlux("EX_EGLU")
@@ -67,10 +70,11 @@ v_L = ExchangeFlux("EX_ELAC")
 #v_O = ExchangeFlux("EX_O2")
 
 
-# add exchange fluxes to dfba_model
+#### Add Exchange Fluxes to dfba_model ####
+
 dfba_model_G1.add_exchange_fluxes([mu, v_G, v_L, v_N])#, v_O])
 
-# add rhs expressions for kinetic variables in dfba_model
+#### Expressions for Kinetic Variables ####
 dfba_model_G1.add_rhs_expression("Biomass", mu * X)
 dfba_model_G1.add_rhs_expression("EGLC", v_G * (X / 1000.0))
 dfba_model_G1.add_rhs_expression("EGLU", v_N * (X / 1000.0))
@@ -78,8 +82,8 @@ dfba_model_G1.add_rhs_expression("ELAC", v_L * (X / 1000.0))
 # dfba_model_G1.add_rhs_expression("O2", v_O * (X / 1000.0)) 
 
 
-# add lower/upper bound expressions for exchange fluxes in dfba_model together
-# with expression that must be non-negative for correct evaluation of bounds
+# Add lower/upper Bound Expressions for exchange fluxes 
+# Expressions must be non-negative for correct evaluation of bounds
 
 dfba_model_G1.add_exchange_flux_lb("EX_EGLC", 10 * (Gluc/(3 + Gluc)), Gluc)
 # dfba_model_G1.add_exchange_flux_lb("VBiomass", 2.25e-4 * (X/(4.29 + X)), X)
@@ -87,9 +91,10 @@ dfba_model_G1.add_exchange_flux_lb("EX_EGLC", 10 * (Gluc/(3 + Gluc)), Gluc)
 # dfba_model_G1.add_exchange_flux_lb("EX_ELAC", 1 * (Lac/(0.1 + Lac)), Lac) 
 # dfba_model_G1.add_exchange_flux_lb("EX_O2", 1, O2) 
 
- 
-# add initial conditions for kinetic variables in dfba_model X (gDW/L),
-# metabolites (g/L)
+
+# Initial Conditions of Kinetic Variables #
+####### X (gDW/L), metabolites (g/L) ######
+
 dfba_model_G1.add_initial_conditions(
     {
         "Biomass": 0.1,
@@ -100,15 +105,15 @@ dfba_model_G1.add_initial_conditions(
     }
 )
 
+############ Simulate Model Across Interval t = [0.0,11.0](hours) #############
+##### with outputs for plotting every 0.001h and optional list of fluxes ######
 
-# simulate model across interval t = [0.0,11.0](hours) with outputs for plotting
-# every 0.001h and optional list of fluxes
 concentrationsG1, trajectories = dfba_model_G1.simulate(
     0, 11, 0.001, ["VBiomass","EX_EGLC", "EX_EGLU", "EX_ELAC"] #, "EX_O2"]
 )
 
 
-################### Phase avec seuil ################
+####### Cell Cycle Dhases Defined by Threshold ######
 
 # out = True
 
@@ -132,7 +137,9 @@ concentrationsG1, trajectories = dfba_model_G1.simulate(
 
 concentrationsG1.to_csv("concentrationsG1.csv")
 
-# Récupère les dernières valeurs de concentration pour les utilisées en conditions initiales
+########## Gets latest concentrations values of Kinetic Variables ###############
+####################### to use as initial condition next ########################
+
 with open('concentrationsG1.csv', 'r') as csvfile:
     names = csvfile.readline()
     names = names.split('\n')[0].split(',')
@@ -152,12 +159,11 @@ fig = plot_concentrations(concentrationsG1)
 plt.ylim([0, 50])
 fig.show()
 
-############################# Modèle sbml phase S ###############################
-
+############################## SBML Model for S ###############################
 small_model_S = read_sbml_model('/home/csiharath/Stage/DFBACellCycle/small_model/model_mario2013_wocitS.xml')
 small_model_S.solver = "glpk"
 
-################################ Fonction de Xe #################################
+############################## Biomass Function ###############################
 
 small_model_S.objective = 'VBiomass'
 print(small_model_S.objective)
@@ -166,15 +172,15 @@ print(small_model_S.objective)
 small_model_S.reactions.get_by_id("VBiomass").lower_bound = 0
 small_model_S.reactions.get_by_id("VBiomass").upper_bound = 1
 
-############################# Dfba model definition #############################
+############################# dFBA Model Definition ###########################
 
 dfba_model_S = DfbaModel(small_model_S)
 dfba_model_S.add_objectives(["VBiomass"], ["max"])
 print(dfba_model_S.objectives)
 
-############################# Paramètres Phase S ################################
+############################### S Parameters ##################################
 
-# instances of KineticVariable
+##### Instances of Kinetic Variables ######
 
 X = KineticVariable("Biomass")
 Gluc = KineticVariable("EGLC")
@@ -182,35 +188,36 @@ Lac = KineticVariable("ELAC")
 Gln = KineticVariable("EGLU")
 #O2 = KineticVariable("O2")
 
-# add kinetic variables to dfba_model
+### Add Kinetic variables to dfba_model ###
+
 dfba_model_S.add_kinetic_variables([X, Gluc, Lac, Gln])#, O2])
 
-# instances of ExchangeFlux
+######## Instances of ExchangeFlux ########
 mu = ExchangeFlux("VBiomass")
 v_G = ExchangeFlux("EX_EGLC") 
 v_N = ExchangeFlux("EX_EGLU")
 v_L = ExchangeFlux("EX_ELAC")
 #v_O = ExchangeFlux("EX_O2")
 
+#### Add Exchange Fluxes to dfba_model ####
 
-# add exchange fluxes to dfba_model
 dfba_model_S.add_exchange_fluxes([mu, v_G, v_L, v_N])#, v_O])
 
-# add rhs expressions for kinetic variables in dfba_model
+#### Expressions for Kinetic Variables ####
 dfba_model_S.add_rhs_expression("Biomass", mu * X)
 dfba_model_S.add_rhs_expression("EGLC", v_G * (X / 1000.0))
 dfba_model_S.add_rhs_expression("EGLU", v_N * (X / 1000.0))
 dfba_model_S.add_rhs_expression("ELAC", v_L * (X / 1000.0)) 
 #dfba_model_S.add_rhs_expression("O2", v_O * (X / 1000.0))
 
-# add lower/upper bound expressions for exchange fluxes in dfba_model together
-# with expression that must be non-negative for correct evaluation of bounds
+# Add lower/upper Bound Expressions for exchange fluxes 
+# Expressions must be non-negative for correct evaluation of bounds
 
 dfba_model_S.add_exchange_flux_lb("EX_EGLC", 10 * (Gluc/(5 + Gluc)), Gluc)
 #dfba_model_S.add_exchange_flux_lb("EX_O2", 1, O2) 
 
-# add initial conditions for kinetic variables in dfba_model X (gDW/L),
-# metabolites (g/L)
+# Initial Conditions of Kinetic Variables #
+####### X (gDW/L), metabolites (g/L) ######
 dfba_model_S.add_initial_conditions(
     {
         "Biomass": S_init["Biomass"],
@@ -221,11 +228,14 @@ dfba_model_S.add_initial_conditions(
     }
 )
 
+############ Simulate Model Across Interval t = [11.0,19.0](hours) ############
+##### with outputs for plotting every 0.001h and optional list of fluxes ######
+
 concentrationsS, trajectories = dfba_model_S.simulate(
     11, 19, 0.001, ["VBiomass","EX_EGLC", "EX_EGLU", "EX_ELAC", "EX_O2"] # "VPPRIBP", "VPALM", "VHK", "VAKGDH"]
 )
 
-################### Phase avec seuil ################
+####### Cell Cycle Dhases Defined by Threshold ######
 
 # out = True
 
@@ -249,7 +259,8 @@ concentrationsS, trajectories = dfba_model_S.simulate(
 
 concentrationsS.to_csv("concentrationsS.csv")
 
-# Récupère les dernières valeurs de concentration pour les utilisées en conditions initiales
+########## Gets latest concentrations values of Kinetic Variables ###############
+####################### to use as initial condition next ########################
 with open('concentrationsS.csv', 'r') as csvfile:
     names = csvfile.readline()
     names = names.split('\n')[0].split(',')
@@ -261,7 +272,9 @@ with open('concentrationsS.csv', 'r') as csvfile:
 G2_init = dict(zip(names, G2_init_list))
 
 
-# Ajoute les valeurs de concentrations aux valeurs précédentes
+######## Concatenates concentrations values #########
+############## with previous phase(s) ###############
+
 with open('concentrationsS.csv') as csvfile_S:
     csvreader = csv.reader(csvfile_S, delimiter=',', quotechar='|')
     with open('concentrationsG1.csv', 'a', newline='') as csvfile_G1:
@@ -279,12 +292,13 @@ fig = plot_concentrations(concentrationsS)
 # print(type(fig))
 plt.ylim([0, 50])
 fig.show()
-############################# Modèle sbml phase G2 ##############################
+
+############################## SBML Model for G2 ##############################
 
 small_model_G2 = read_sbml_model('/home/csiharath/Stage/DFBACellCycle/small_model/model_mario2013_wocitG2.xml')
 small_model_G2.solver = "glpk"
 
-################################ Fonction de Xe #################################
+############################## Biomass Function ###############################
 
 small_model_G2.objective = 'VBiomass'
 print(small_model_G2.objective)
@@ -293,16 +307,15 @@ print(small_model_G2.objective)
 small_model_G2.reactions.get_by_id("VBiomass").lower_bound = 0
 small_model_G2.reactions.get_by_id("VBiomass").upper_bound = 1
 
-############################# Dfba model definition #############################
+############################# dFBA Model Definition ###########################
 
 dfba_model_G2 = DfbaModel(small_model_G2)
 dfba_model_G2.add_objectives(["VBiomass"], ["max"])
 print(dfba_model_G2.objectives)
 
-############################# Paramètres Phase G2 ###############################
+############################## G2 Parameters ##################################
 
-
-# instances of KineticVariable
+##### Instances of Kinetic Variables ######
 
 X = KineticVariable("Biomass")
 Gluc = KineticVariable("EGLC")
@@ -310,10 +323,11 @@ Lac = KineticVariable("ELAC")
 Gln = KineticVariable("EGLU")
 #O2 = KineticVariable("O2")
 
-# add kinetic variables to dfba_model
+### Add Kinetic variables to dfba_model ###
+
 dfba_model_G2.add_kinetic_variables([X, Gluc, Lac, Gln])#, #O2])
 
-# instances of ExchangeFlux
+######## Instances of ExchangeFlux ########
 mu = ExchangeFlux("VBiomass")
 v_G = ExchangeFlux("EX_EGLC") 
 v_N = ExchangeFlux("EX_EGLU")
@@ -321,24 +335,26 @@ v_L = ExchangeFlux("EX_ELAC")
 # v_O = ExchangeFlux("EX_O2")
 
 
-# add exchange fluxes to dfba_model
+#### Add Exchange Fluxes to dfba_model ####
+
 dfba_model_G2.add_exchange_fluxes([mu, v_G, v_L, v_N])# , v_O])
 
-# add rhs expressions for kinetic variables in dfba_model
+#### Expressions for Kinetic Variables ####
 dfba_model_G2.add_rhs_expression("Biomass", mu * X)
 dfba_model_G2.add_rhs_expression("EGLC", v_G * (X / 1000.0))
 dfba_model_G2.add_rhs_expression("EGLU", v_N * (X / 1000.0))
 dfba_model_G2.add_rhs_expression("ELAC", v_L * (X / 1000.0)) 
 #dfba_model_G2.add_rhs_expression("O2", v_O * (X / 1000.0))
 
-# add lower/upper bound expressions for exchange fluxes in dfba_model together
-# with expression that must be non-negative for correct evaluation of bounds
+# Add lower/upper Bound Expressions for exchange fluxes 
+# Expressions must be non-negative for correct evaluation of bounds
 
 dfba_model_G2.add_exchange_flux_lb("EX_EGLC", 10 * (Gluc/(5 + Gluc)), Gluc)
 # dfba_model_G2.add_exchange_flux_lb("EX_O2", 1, O2) 
 
-# add initial conditions for kinetic variables in dfba_model X (gDW/L),
-# metabolites (g/L)
+# Initial Conditions of Kinetic Variables #
+####### X (gDW/L), metabolites (g/L) ######
+
 dfba_model_G2.add_initial_conditions(
     {
         "Biomass": G2_init["Biomass"],
@@ -349,12 +365,18 @@ dfba_model_G2.add_initial_conditions(
     }
 )
 
+############ Simulate Model Across Interval t = [0.0,11.0](hours) #############
+##### with outputs for plotting every 0.001h and optional list of fluxes ######
+
 concentrationsG2, trajectories = dfba_model_G2.simulate(
     19, 23, 0.001, ["VBiomass","EX_EGLC", "EX_EGLU", "EX_ELAC", "EX_O2"]
 )
 
 concentrationsG2.to_csv("concentrationsG2.csv")
-# Ajoute les valeurs de concentrations aux valeurs précédentes
+
+######## Concatenates concentrations values #########
+############## with previous phase(s) ###############
+
 with open('concentrationsG2.csv') as csvfile_G2:
     csvreader = csv.reader(csvfile_G2, delimiter=',', quotechar='|')
     with open('concentrationsG1.csv', 'a', newline='') as csvfile_G1:

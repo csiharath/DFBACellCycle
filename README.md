@@ -24,7 +24,8 @@ Librairies python:
 | `HMRdatabase2_00.xml` | Modèle HMR[<sup>4</sup>](#Références) au format sbml |
 | `fba_small_new.ipynb` | Notebook réalisant des FBA sur le modèle CHO pour chaque phase du cylce cellulaire dans le but de valider le modèle |
 | `fba_cellcycle2.ipynb` | Notebook réalisant des FBA sur le modèle HMR pour chaque phase du cylce cellulaire dans le but de valider le modèle |
-| `dfba_small.py` | Scipt simulant un dFBA pour le modèle CHO sans condition particulière (pas intégré au cycle celulaire) |
+| `dfba_small.py` | Scipt simulant le cycle cellulaire par dFBA pour le modèle CHO |
+| `dfba_hmr.py` | Scipt simulant un dFBA pour le modèle recon3D sans condition particulière (pas intégré au cycle celulaire) |
 | `efm_sbml.py` | Scipt permettant de tracer les voies souhaitées à partir d'un fichier .txt et d'un modèle sbml |
 | `cho.txt` | Exemple de fichier pris en entrée par `efm_sbml.py` |
 
